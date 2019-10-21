@@ -790,7 +790,7 @@ void rtw_mfree2d(void *pbuf, int h, int w, int size)
 	rtw_mfree((u8 *)pbuf, h*sizeof(void*) + w*h*size);
 }
 
-void _rtw_memcpy(void* dst, void* src, u32 sz)
+void _rtw_memcpy(void* dst, const void* src, u32 sz)
 {
 
 #if defined (PLATFORM_LINUX)|| defined (PLATFORM_FREEBSD)
@@ -807,7 +807,7 @@ void _rtw_memcpy(void* dst, void* src, u32 sz)
 
 }
 
-int	_rtw_memcmp(void *dst, void *src, u32 sz)
+int	_rtw_memcmp(const void *dst, const void *src, u32 sz)
 {
 
 #if defined (PLATFORM_LINUX)|| defined (PLATFORM_FREEBSD)
@@ -1790,7 +1790,7 @@ static int isFileReadable(char *path)
 		ret = PTR_ERR(fp);
 	}
 	else {
-		oldfs = get_fs(); set_fs(get_ds());
+		oldfs = get_fs(); set_fs(KERNEL_DS);
 		
 		if(1!=readFile(fp, &buf, 1))
 			ret = PTR_ERR(fp);
@@ -1818,7 +1818,7 @@ static int retriveFromFile(char *path, u8* buf, u32 sz)
 		if( 0 == (ret=openFile(&fp,path, O_RDONLY, 0)) ){
 			DBG_871X("%s openFile path:%s fp=%p\n",__FUNCTION__, path ,fp);
 
-			oldfs = get_fs(); set_fs(get_ds());
+			oldfs = get_fs(); set_fs(KERNEL_DS);
 			ret=readFile(fp, buf, sz);
 			set_fs(oldfs);
 			closeFile(fp);
@@ -1852,7 +1852,7 @@ static int storeToFile(char *path, u8* buf, u32 sz)
 		if( 0 == (ret=openFile(&fp, path, O_CREAT|O_WRONLY, 0666)) ) {
 			DBG_871X("%s openFile path:%s fp=%p\n",__FUNCTION__, path ,fp);
 
-			oldfs = get_fs(); set_fs(get_ds());
+			oldfs = get_fs(); set_fs(KERNEL_DS);
 			ret=writeFile(fp, buf, sz);
 			set_fs(oldfs);
 			closeFile(fp);
